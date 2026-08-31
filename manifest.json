@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "Chilling Web",
+  "description": "Custom website styling with per-site toggles and feature controls.",
+  "version": "1.0",
+  "permissions": ["scripting", "webNavigation", "storage"],
+  "host_permissions": ["<all_urls>"],
+  "icons": {
+    "128": "assets/icon128.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "extensionPages/popup/popup.html"
+  },
+  "options_page": "extensionPages/options/options.html",
+  "web_accessible_resources": [
+    {
+      "resources": ["styles/*.css"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

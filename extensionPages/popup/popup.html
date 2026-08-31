@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="popup-header">
+      <h1>Chilling Web</h1>
+      <button
+        id="open-options"
+        class="icon-button"
+        title="Options"
+        aria-label="Options"
+      >
+        ⚙
+      </button>
+    </div>
+    <div id="site">Loading site...</div>
+
+    <div class="site-toggle">
+      <label for="site-enabled">Enable styles on this site</label>
+      <input id="site-enabled" type="checkbox" />
+    </div>
+
+    <section id="features"></section>
+
+    <button id="save">Save changes</button>
+
+    <div id="status" role="status"></div>
+
+    <script src="../../feature-utils.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

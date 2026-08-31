@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chilling Web — Options</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <div class="options-container">
+      <h1>Chilling Web</h1>
+      <p class="subtitle">Extension settings</p>
+
+      <div class="option-row">
+        <input id="local-mode" type="checkbox" />
+        <label for="local-mode">
+          <strong>Use local styles</strong>
+          <small>
+            By default, styles are fetched from the
+            <a
+              href="https://github.com/deceivingispart/chilling-web-styles"
+              target="_blank"
+              rel="noopener"
+              >chilling-web-styles</a
+            >
+            repository on GitHub. Enable this to use the local
+            <code>.css</code> files from the <code>styles/</code> folder instead
+            — useful for testing a new style before sending it to the
+            repository.
+          </small>
+        </label>
+      </div>
+
+      <button id="save">Save</button>
+      <div id="status" role="status"></div>
+    </div>
+
+    <script src="../../feature-utils.js"></script>
+    <script src="options.js"></script>
+  </body>
+</html>
