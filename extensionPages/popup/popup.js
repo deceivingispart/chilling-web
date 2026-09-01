@@ -17,10 +17,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     const emptyState = document.createElement("div");
     emptyState.className = "empty-state";
     emptyState.innerHTML = `
-      <div class="empty-state-art" aria-hidden="true">
-        <div class="sparkle">✦</div>
-        <div class="icon-bubble">🎨</div>
-      </div>
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="20" cy="28" r="2.5" fill="currentColor" />
+        <path d="M13 22a10 10 0 0 1 14 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity="0.55" />
+        <path d="M7 16a19 19 0 0 1 26 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity="0.3" />
+        <line x1="6" y1="34" x2="34" y2="6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+      </svg>
       <h2>No styles</h2>
       <p>${message}</p>
     `;
@@ -71,7 +73,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!siteCss) {
     renderNoStylesState(
       hostname,
-      "This site does not have a custom style pack yet, but settings are still available.",
+      "This site does not have a custom style pack yet...",
     );
     return;
   }
