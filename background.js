@@ -13,6 +13,7 @@ chrome.webNavigation.onCommitted.addListener(async (details) => {
     const settings =
       stored[CHILLING_SETTINGS_KEY]?.[hostname] ??
       getDefaultSiteSettings(features);
+
     const customCss = settings.enabled ? (settings.customCss ?? "") : "";
     const enabledCss =
       `${getEnabledCss(features, settings)}\n${customCss}`.trim();
@@ -22,7 +23,6 @@ chrome.webNavigation.onCommitted.addListener(async (details) => {
       target: { tabId: details.tabId },
       css: enabledCss,
     });
-    
   } catch (e) {
     // ? ignores chrome://, about:blank and other unsupported URLs, but logs
     if (!(e instanceof TypeError)) console.warn("chilling web:", e);

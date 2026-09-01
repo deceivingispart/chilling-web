@@ -14,18 +14,26 @@ async function setGlobalSettings(settings) {
 
 // TODO: consider adding a cache for prevent unnecessary fetches and improve injection time.
 async function fetchSiteCss(hostname) {
-  const { localMode } = await getGlobalSettings();
+  if (!hostname) return null;
 
-  if (localMode) {
-    const localUrl = chrome.runtime.getURL(`styles/${hostname}.css`);
-    const localResponse = await fetch(localUrl);
-    if (!localResponse.ok) return null;
-    return { css: await localResponse.text(), source: "local" };
+  try {
+    const { localMode } = await getGlobalSettings();
+
+    if (localMode) {
+      const localUrl = chrome.runtime.getURL(`styles/${hostname}.css`);
+      const localResponse = await fetch(localUrl);
+      if (!localResponse.ok) return null;
+      return { css: await localResponse.text(), source: "local" };
+    }
+
+    const remoteResponse = await fetch(
+      `${STYLES_REPO_RAW_BASE}${hostname}.css`,
+    );
+    if (!remoteResponse.ok) return null;
+    return { css: await remoteResponse.text(), source: "remote" };
+  } catch (error) {
+    return null;
   }
-
-  const remoteResponse = await fetch(`${STYLES_REPO_RAW_BASE}${hostname}.css`);
-  if (!remoteResponse.ok) return null;
-  return { css: await remoteResponse.text(), source: "remote" };
 }
 
 function slugifyFeatureId(value) {
