@@ -1,9 +1,58 @@
 document.addEventListener("DOMContentLoaded", async () => {
+  const optionsButton = document.getElementById("open-options");
+  optionsButton.addEventListener("click", () =>
+    chrome.runtime.openOptionsPage(),
+  );
+
+  const siteName = document.getElementById("site");
+  const siteEnabled = document.getElementById("site-enabled");
+  const featureList = document.getElementById("features");
+  const saveButton = document.getElementById("save");
+
+  const renderNoStylesState = (label, message) => {
+    siteName.textContent = label;
+    siteEnabled.disabled = true;
+    saveButton.disabled = true;
+
+    const emptyState = document.createElement("div");
+    emptyState.className = "empty-state";
+    emptyState.innerHTML = `
+      <div class="empty-state-art" aria-hidden="true">
+        <div class="sparkle">✦</div>
+        <div class="icon-bubble">🎨</div>
+      </div>
+      <h2>No styles</h2>
+      <p>${message}</p>
+    `;
+    featureList.append(emptyState);
+  };
+
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
   if (!tab?.url) {
-    document.getElementById("site").textContent = "Unsupported page";
-    document.getElementById("save").disabled = true;
+    renderNoStylesState(
+      "Unsupported page",
+      "This page cannot be customized yet.",
+    );
+    return;
+  }
+
+  let url;
+  try {
+    url = new URL(tab.url);
+  } catch (error) {
+    renderNoStylesState(
+      "Unsupported page",
+      "This page cannot be customized yet.",
+    );
+    return;
+  }
+
+  if (!["http:", "https:"].includes(url.protocol)) {
+    renderNoStylesState(
+      "Unsupported page",
+      "This browser page cannot be customized.",
+    );
     return;
   }
 
@@ -11,13 +60,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   try {
     hostname = getHostname(tab.url);
   } catch (error) {
-    document.getElementById("site").textContent = "Unsupported page";
-    document.getElementById("save").disabled = true;
+    renderNoStylesState(
+      "Unsupported page",
+      "This page cannot be customized yet.",
+    );
     return;
   }
 
   const siteCss = await fetchSiteCss(hostname);
-  const features = siteCss ? parseCssFeatures(siteCss.css) : [];
+  if (!siteCss) {
+    renderNoStylesState(
+      hostname,
+      "This site does not have a custom style pack yet, but settings are still available.",
+    );
+    return;
+  }
+
+  const features = parseCssFeatures(siteCss.css);
   const stored = await chrome.storage.local.get(CHILLING_SETTINGS_KEY);
   const allSettings = stored[CHILLING_SETTINGS_KEY] ?? {};
   const legacyCss = (await chrome.storage.local.get(hostname))[hostname] ?? "";
@@ -32,16 +91,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     customCss: allSettings[hostname]?.customCss ?? legacyCss,
   };
 
-  document.getElementById("site").textContent = hostname;
+  siteName.textContent = hostname;
   if (siteCss?.source === "local") {
     const badge = document.createElement("span");
     badge.className = "local-mode-badge";
     badge.textContent = "local mode";
-    document.getElementById("site").append(" ", badge);
+    siteName.append(" ", badge);
   }
-  const siteEnabled = document.getElementById("site-enabled");
   siteEnabled.checked = settings.enabled;
-  const featureList = document.getElementById("features");
   features.forEach((feature) => {
     const row = document.createElement("div");
     row.className = "feature";
@@ -72,8 +129,5 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (reload) await chrome.tabs.reload(tab.id);
   };
 
-  document.getElementById("save").addEventListener("click", () => save(true));
-  document
-    .getElementById("open-options")
-    .addEventListener("click", () => chrome.runtime.openOptionsPage());
+  saveButton.addEventListener("click", () => save(true));
 });
